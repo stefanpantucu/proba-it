@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors'); // makes all routes secure
+const contactRequests = require('./routes/contact-requests');
 
 // compresses response bodies for all requests
 const compression = require('compression'); 
@@ -28,21 +29,16 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-// initialize routes
-
 const PORT = process.env.PORT;
-
-app.listen(PORT, () => {
-    console.log('App listening on port ' + PORT + '! Go to https://localhost:'
-    + PORT + '/');
-});
 
 app.enable('trust proxy');
 
-app.use(function(req, res, next) {
-    if (req.secure) {
-        return next();
-    }
+// initialize routes
+app.use('/api/contact-requests', contactRequests);
 
-    res.redirect('https://' + req.headers.host + req.url);
-})
+app.listen(PORT, () => {
+    console.log('App listening on port ' + PORT + '! Go to http://localhost:'
+    + PORT + '/');
+});
+
+

@@ -1,5 +1,5 @@
-dbPasswordDev = 'mongodb://localhost/proba-it';
+dbUrl = 'mongodb://localhost/proba-it';
 
 module.exports = {
-    mongoURI: dbPasswordDev,
+    mongoURI: dbUrl,
 };

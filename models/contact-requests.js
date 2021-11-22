@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
-
-function validator(name, email, message) {
-
-}
+const validator = require('validator');
 
 const contactSchema = new mongoose.Schema({
     name: {
@@ -14,12 +11,12 @@ const contactSchema = new mongoose.Schema({
         type: String,
         required: true,
         maxLength: 50,
-        match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+        match: /\S+@\S+\.\S+/
     },
     message: {
         type: String,
         required: true,
-        maxLength: 5000
+        maxLength: 5000,
     },
     is_resolved: {
         type: Boolean,
