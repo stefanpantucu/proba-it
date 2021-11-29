@@ -3,11 +3,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors'); // makes all routes secure
 const contactRequests = require('./routes/contact-requests');
+const users = require('./routes/users');
 
 // compresses response bodies for all requests
 const compression = require('compression'); 
 
 const mongoURI = require('./config/keys').mongoURI;
+const passport = require('passport');
 
 // configure .env
 require('dotenv').config();
@@ -15,6 +17,9 @@ require('dotenv').config();
 const app = express();
 
 app.use(compression());
+
+// passport sessions config
+require('./config/passport')(passport);
 
 // connect to the database
 mongoose
@@ -35,6 +40,7 @@ app.enable('trust proxy');
 
 // initialize routes
 app.use('/api/contact-requests', contactRequests);
+app.use('/api/auth', users);
 
 app.listen(PORT, () => {
     console.log('App listening on port ' + PORT + '! Go to http://localhost:'
