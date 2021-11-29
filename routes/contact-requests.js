@@ -19,8 +19,8 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     const { name, email, message } = req.body;
 
-    if ((typeof name !== typeof '') || (typeof message !== typeof '') ||
-        (typeof email !== typeof '')) {
+    if ((typeof name != typeof '') || (typeof message != typeof '') ||
+        (typeof email != typeof '')) {
         console.log('Invalid data type');
         return res.status(400).send();
     }
@@ -47,13 +47,19 @@ router.patch('/:id', async (req, res) => {
         const { is_resolved } = req.body;
 
 
-        if (typeof is_resolved != typeof true)
-            return res.status(400).send(); // is_resolved is not boolean
-
+        if (typeof is_resolved != typeof true) {
+            let check_if_bool = (is_resolved === 'true') || (is_resolved === 'false');
+            if (!check_if_bool) {
+                console.log("is_resolved is not boolean");
+                return res.status(400).send(); // is_resolved is not boolean
+            }
+        }
         const result = await contactModel.findByIdAndUpdate(id, {is_resolved});
 
-        if (result == null)
+        if (result == null){
+            console.log("No contact-request has this id");
             return res.status(404).send();
+        }
 
         return res.send(result);
     }
