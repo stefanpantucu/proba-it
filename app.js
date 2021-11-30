@@ -41,6 +41,7 @@ app.enable('trust proxy');
 // initialize routes
 app.use('/api/contact-requests', contactRequests);
 app.use('/api/auth', users);
+app.use('/api/users', users);
 
 app.listen(PORT, () => {
     console.log('App listening on port ' + PORT + '! Go to http://localhost:'

@@ -13,6 +13,12 @@ router.get('/:id', async (req, res) => {
     console.log(req.params.id);
 
     const contactRequest = await contactModel.findOne({_id: new mongoose.Types.ObjectId(req.params.id)});
+   
+    if (!contactRequest) {
+        console.log('No contact request has that id');
+        return res.status(404).send();
+    }
+   
     return res.send(contactRequest);
 })
 
@@ -65,7 +71,7 @@ router.patch('/:id', async (req, res) => {
     }
     catch(error) {
         console.log(error.message);
-        res.status(404).send();
+        res.status(500).send();
     }
 })
 
@@ -82,7 +88,7 @@ router.delete('/:id', async (req, res) => {
     }
     catch(error) {
         console.log(error.message);
-        res.status(404).send();
+        res.status(500).send();
     }
 })
 
