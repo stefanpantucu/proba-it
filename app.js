@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors'); // makes all routes secure
 const contactRequests = require('./routes/contact-requests');
 const users = require('./routes/users');
+const reviews = require('./routes/reviews');
 
 // compresses response bodies for all requests
 const compression = require('compression'); 
@@ -42,6 +43,7 @@ app.enable('trust proxy');
 app.use('/api/contact-requests', contactRequests);
 app.use('/api/auth', users);
 app.use('/api/users', users);
+app.use('/api/reviews', reviews);
 
 app.listen(PORT, () => {
     console.log('App listening on port ' + PORT + '! Go to http://localhost:'
