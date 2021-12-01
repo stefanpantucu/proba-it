@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const reviews = require('../models/review');
 const Review = require('../models/review');
 const User = require('../models/user');
 
@@ -122,7 +121,7 @@ router.delete('/:id', async (req, res) => {
                 }
             })
 
-            reviewsArray.splice(0, 1); // remove review from the user's list
+            reviewsArray.splice(index, 1); // remove review from the user's list
 
             await User.findByIdAndUpdate(user_id, {reviews: reviewsArray});
         }

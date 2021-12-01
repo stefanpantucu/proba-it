@@ -4,7 +4,7 @@ const reviewSchema = new mongoose.Schema({
     message: {
         type: String,
         required: true,
-        maxlength: 500
+        maxLength: 500
     },
     user_id: {
         type: String,
