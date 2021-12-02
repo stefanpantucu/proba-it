@@ -41,7 +41,6 @@ router.post('/', async (req, res) => {
     });
 
     let rev_id = review._id;
-    console.log(rev_id);
 
     const user = await User.findOne({_id: new mongoose.Types.ObjectId(user_id)});
 
