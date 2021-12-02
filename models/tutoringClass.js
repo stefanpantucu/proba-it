@@ -14,7 +14,8 @@ const classSchema = new mongoose.Schema({
     teacher_id: {
         type: String,
         required: true
-    }
+    },
+    users: []
 }, {
     timestamps: true
 });

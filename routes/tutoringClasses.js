@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Tutoring = require('../models/tutoringClass');
 const User = require('../models/user');
 const reqAuth = require('../config/safeRoutes').reqAuth;
+const reqAuthStud = require('../config/safeRoutes').reqAuthStud;
 
 router.get('/', async (req, res) => {
     let classes = await Tutoring.find();
@@ -130,6 +131,37 @@ router.delete('/:id', reqAuth, async (req, res) => {
 
         // delete the tutoring class from the db
         await Tutoring.findByIdAndDelete(id);
+
+        return res.status(200).send();
+    }
+    catch(error) {
+        console.log(error.message);
+        return res.status(500).send();
+    }
+})
+
+router.post('/:id/enroll', reqAuthStud, async (req, res) => {
+    try {
+        const id = req.params.id; // get the tutoring class id
+        const { stud_id } = req.body;
+
+        const student = await User.findOne({_id: new mongoose.Types.ObjectId(stud_id)}); 
+        const tclass = await Tutoring.findOne({_id: new mongoose.Types.ObjectId(id)});
+
+        if (tclass == null) {
+            console.log('No tutoring class has this id:' + id);
+            return res.status(404).send();
+        }
+
+        let usersArray = tclass.users;
+        usersArray.push({id: stud_id});
+
+        let classesArray = student.tutoring_classes;
+        classesArray.push({ id: tclass._id, description: tclass.description,
+            teacher_id: tclass.teacher_id, subject: tclass.subject });
+
+        await Tutoring.findByIdAndUpdate(id, {users: usersArray});
+        await User.findByIdAndUpdate(stud_id, {tutoring_classes: classesArray});
 
         return res.status(200).send();
     }

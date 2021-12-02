@@ -30,6 +30,27 @@ const reqAuth = (req, res, next) => {
     })
 }
 
+const reqAuthStud = (req, res, next) => {
+    const token = String(req.headers.authorization);
+    ActiveSession.find({ token: token }, (err, session) => {
+        if (session.length == 1) { // there is one element in the array
+            
+            let user = parseJwt(token).user;
+            if (user.role != 'student'){
+                console.log('Only students can enroll!');
+                return res.status(403).send();
+            }
+            req.body.stud_id = user._id;
+            return next();
+        }
+        else {
+            console.log('User is not logged in');
+            return res.status(401).send(); // unauthorized
+        }
+    })
+}
+
 module.exports = {
-    reqAuth: reqAuth
+    reqAuth: reqAuth,
+    reqAuthStud: reqAuthStud
 };
