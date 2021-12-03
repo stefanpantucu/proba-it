@@ -47,3 +47,6 @@ rol de student pot sa se inroleze.
 
 Similar pentru review, doar userul care a creat review-ul il poate modifica/sterge.
 (Necesita autentificare)
+
+Unde este necesara autentificarea pentru a trimite un request, token-ul de autentificare
+este intors la login si trebuie pus in Headers->Authorization la requestul respectiv.
