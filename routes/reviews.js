@@ -16,6 +16,11 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
+
     const review = await Review.findOne({_id: new mongoose.Types.ObjectId(req.params.id)});
 
     if (!review) {
@@ -30,30 +35,33 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     const { message, user_id } = req.body;
 
+    if (!(user_id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid user id');
+        return res.status(400).send();
+    }
+
     if (message == undefined || user_id == undefined) {
         console.log('Message/user_id is undefined');
         return res.status(400).send();
     }
 
-    const review = new Review({
-        message,
-        user_id
-    });
-
-    let rev_id = review._id;
-
     const user = await User.findOne({_id: new mongoose.Types.ObjectId(user_id)});
-
     if (!user) {
         console.log('No user has that id:' + user_id);
         return res.status(404).send();
     }
 
+    const review = new Review({
+        message: message,
+        user_id: user._id
+    });
+    review.populate('user_id');
+
     try {
         await review.save();
 
         let update = user.reviews;
-        update.push({id: rev_id, message: message, user_id: user_id});
+        update.push(review);
         await User.findByIdAndUpdate(user_id, {reviews: update});
         
         return res.status(200).send();
@@ -65,6 +73,11 @@ router.post('/', async (req, res) => {
 })
 
 router.patch('/:id', async (req, res) => {
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
+
     try {
         const id = req.params.id; // get review id
         const { message } = req.body;
@@ -83,16 +96,6 @@ router.patch('/:id', async (req, res) => {
             return res.status(404).send();
         }
 
-        let reviewsArray = user.reviews;
-        reviewsArray.forEach(rev => {
-            
-            if (JSON.stringify(rev.id) === JSON.stringify(review._id)) {
-                rev.message = message;
-            }
-        })
-
-        await User.findByIdAndUpdate(user._id, {reviews: reviewsArray});
-
         return res.status(200).send({message: message});
     }
     catch(error) {
@@ -102,6 +105,11 @@ router.patch('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
+    
     try {
         const id = req.params.id;
         const review = await Review.findOne({_id: new mongoose.Types.ObjectId(id)});
@@ -113,9 +121,9 @@ router.delete('/:id', async (req, res) => {
             const user = await User.findOne({_id: new mongoose.Types.ObjectId(user_id)});
             let reviewsArray = user.reviews;
             let index = -1;
+
             reviewsArray.forEach(rev => {
-                
-                if (JSON.stringify(rev.id) === JSON.stringify(review._id)) {
+                if (JSON.stringify(rev) === JSON.stringify(review._id)) {
                     index = reviewsArray.indexOf(rev);
                 }
             })

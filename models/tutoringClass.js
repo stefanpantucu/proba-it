@@ -12,10 +12,11 @@ const classSchema = new mongoose.Schema({
         maxLength: 80
     },
     teacher_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users',
         required: true
     },
-    users: []
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }]
 }, {
     timestamps: true
 });

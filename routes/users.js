@@ -23,7 +23,7 @@ function validate_email(email, role) {
     return true;
 }
 
-router.post('/register', (req, res) => {
+router.post('/auth/register', (req, res) => {
     const { firstname, lastname, password, email,
         role, confirmation_password} = req.body;
     
@@ -61,9 +61,10 @@ router.post('/register', (req, res) => {
 
                     User.create(user, function (err, user) {
                         if (err) {
+                            console.log(err.message);
                             return res.status(400).send();
                         }
-                        return res.json({success: true});
+                        return res.status(201).send({success: true});
                     })
                 })
             })
@@ -71,7 +72,7 @@ router.post('/register', (req, res) => {
     })
 })
 
-router.post('/login', (req, res) => {
+router.post('/auth/login', (req, res) => {
     const { email, password } = req.body;
 
     if (typeof email != typeof '' || typeof password != typeof '') {
@@ -108,7 +109,7 @@ router.post('/login', (req, res) => {
     })
 })
 
-router.get('/', async (req, res) => {
+router.get('/users', async (req, res) => {
     let userArray = await User.find();
     let respArray = [];
 
@@ -120,7 +121,12 @@ router.get('/', async (req, res) => {
     res.send(respArray);
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/users/:id', async (req, res) => {
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
+
     const user = await User.findOne({_id: new mongoose.Types.ObjectId(req.params.id)});
 
     if (!user) {
@@ -131,7 +137,12 @@ router.get('/:id', async (req, res) => {
         lastname: user.lastname, role: user.role });
 })
 
-router.patch('/:id', async (req, res) => {
+router.patch('/users/:id', async (req, res) => {
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
+    
     try {
         const id = req.params.id; // get user id
         const user = await User.findOne({_id: new mongoose.Types.ObjectId(id)});
@@ -190,7 +201,12 @@ router.patch('/:id', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/users/:id', async (req, res) => {
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
+
     try {
         const id = req.params.id;
 

@@ -42,8 +42,7 @@ app.enable('trust proxy');
 
 // initialize routes
 app.use('/api/contact-requests', contactRequests);
-app.use('/api/auth', users);
-app.use('/api/users', users);
+app.use('/api', users);
 app.use('/api/reviews', reviews);
 app.use('/api/tutoring-classes', classes);
 

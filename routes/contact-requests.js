@@ -10,7 +10,10 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-    console.log(req.params.id);
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
 
     const contactRequest = await contactModel.findOne({_id: new mongoose.Types.ObjectId(req.params.id)});
    
@@ -48,6 +51,11 @@ router.post('/', async (req, res) => {
 })
 
 router.patch('/:id', async (req, res) => {
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
+
     try {
         const id = req.params.id; // get object id
         const { is_resolved } = req.body;
@@ -76,6 +84,11 @@ router.patch('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
+    if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
+        console.log('Invalid id');
+        return res.status(400).send();
+    }
+    
     try {
         const id = req.params.id; // get object id
 

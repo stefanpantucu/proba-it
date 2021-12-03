@@ -7,7 +7,8 @@ const reviewSchema = new mongoose.Schema({
         maxLength: 500
     },
     user_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users',
         required: true
     }
 }, {

@@ -23,10 +23,12 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
+        enum: ['student', 'teacher'],
         required: true
     },
-    reviews: [],
-    tutoring_classes: []
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reviews' }],
+    tutoring_classes: [{ type: mongoose.Schema.Types.ObjectId,
+                         ref: 'TutoringClasses' }]
 }, {
     timestamps: true
 });
