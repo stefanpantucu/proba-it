@@ -50,7 +50,25 @@ const reqAuthStud = (req, res, next) => {
     })
 }
 
+const reqAuthReview = (req, res, next) => {
+    const token = String(req.headers.authorization);
+    ActiveSession.find({ token: token }, (err, session) => {
+        if (session.length == 1) { // there is one element in the array
+            
+            let user = parseJwt(token).user;
+
+            req.body.user_id = user._id;
+            return next();
+        }
+        else {
+            console.log('User is not logged in');
+            return res.status(401).send(); // unauthorized
+        }
+    })
+}
+
 module.exports = {
     reqAuth: reqAuth,
-    reqAuthStud: reqAuthStud
+    reqAuthStud: reqAuthStud,
+    reqAuthReview: reqAuthReview
 };

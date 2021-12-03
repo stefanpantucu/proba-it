@@ -1,5 +1,6 @@
 Proba backend
 
+Trebuie sa fie instalat npm
 Pachetele necesare se afla in package.json si pot fi instalate cu npm install.
 Pentru rularea aplicatiei: nodemon app.js
 
@@ -7,3 +8,42 @@ Pentru requesturile de tip GET, la fiecare endpoint se creeaza un query cu toate
 entitatile de acel tip, se pun datele acestora intr-un array si este trimis ca
 raspuns.
 
+Pentru requesturile de tip GET {id}, se verifica daca id-ul primit este unul valid,
+apoi se cauta entitatea in baza de date. Daca nu exista, trimite status 404, altfel
+trimite entitatea ca raspuns.
+
+Pentru requesturile de tip POST, se verifica validitatea datelor primite in request,
+se creeeaza o entitate si apoi este salvata in baza de date respectiva.
+
+Pentru requesturile de tip PATCH {id}, se verifica daca id-ul primit este valid,
+apoi se verifica validitatea datelor folosite pentru update. Se verifica daca
+exista entitatea care se vrea actualizata, apoi se face actualizarea.
+
+Pentru requesturile de tip DELETE {id},se verifica daca id-ul primit este valid,
+apoi verificam daca exista entitatea ce se vrea stearsa, iar daca exista, va fi
+stearsa. In cazul tutoring-class, acesta va fi sters atat din array-ul
+profesorului care l-a creat, cat si din array-ul studentilor care s-au inscris
+la acel tutoring-class.
+
+
+
+Pentru entitatea User:
+    register: Se verifica validitatea datelor primite in body-ul requestului,
+             apoi se verifica daca adresa de email este deja folosita. Daca
+             emailul nu e deja folosit, atunci e folosit un algoritm de hashing
+             pentru a stoca un hash al parolei in baza de date, nu parola in
+             plain text. Apoi userul este salvat in baza de date.
+
+    login: Se verifica validitatea datelor primite in body-ul requestului, apoi
+          se verifica daca exista un user cu acel email. Daca exista, se verifica
+          daca hashul generat de parola introdusa corespunde cu cel din baza de date.
+          Daca parola a fost corecta, este generata si o sesiune cu un token ce va
+          expira intr-o saptamana, tokenul putand fi folosit pentru actiuni ce
+          necesita autentificare.
+
+Pentru tutoring-class, o entitate poate fi modificata sau stearsa doar de
+catre profesorul care a creat-o. La enrollment, doar userii logati si care au
+rol de student pot sa se inroleze.
+
+Similar pentru review, doar userul care a creat review-ul il poate modifica/sterge.
+(Necesita autentificare)

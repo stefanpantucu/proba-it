@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Review = require('../models/review');
 const User = require('../models/user');
+const reqAuthReview = require('../config/safeRoutes').reqAuthReview;
 
 router.get('/', async (req, res) => {
     let reviewsArray = await Review.find();
@@ -32,7 +33,7 @@ router.get('/:id', async (req, res) => {
             user_id: review.user_id });
 })
 
-router.post('/', async (req, res) => {
+router.post('/', reqAuthReview, async (req, res) => {
     const { message, user_id } = req.body;
 
     if (!(user_id.match(/^[0-9a-fA-F]{24}$/))) {
@@ -72,7 +73,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', reqAuthReview, async (req, res) => {
     if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
         console.log('Invalid id');
         return res.status(400).send();
@@ -88,6 +89,12 @@ router.patch('/:id', async (req, res) => {
         }
 
         const review = await Review.findOne({_id: new mongoose.Types.ObjectId(id)});
+
+        if (JSON.stringify(review.user_id) !== JSON.stringify(req.body.user_id)) {
+            console.log('Only the owner of the review can modify it');
+            return res.status(401).send();
+        }
+
         const result = await Review.findByIdAndUpdate(id, {message});
         const user = await User.findOne({_id: new mongoose.Types.ObjectId(review.user_id)});
 
@@ -104,7 +111,7 @@ router.patch('/:id', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', reqAuthReview, async (req, res) => {
     if (!(req.params.id.match(/^[0-9a-fA-F]{24}$/))) {
         console.log('Invalid id');
         return res.status(400).send();
@@ -117,6 +124,11 @@ router.delete('/:id', async (req, res) => {
 
         if (review != null) {
             user_id = review.user_id;
+
+            if (JSON.stringify(review.user_id) !== JSON.stringify(req.body.user_id)) {
+                console.log('Only the owner of the review can delete it');
+                return res.status(401).send();
+            }
 
             const user = await User.findOne({_id: new mongoose.Types.ObjectId(user_id)});
             let reviewsArray = user.reviews;
