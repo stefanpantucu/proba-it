@@ -1,0 +1,9 @@
+Proba backend
+
+Pachetele necesare se afla in package.json si pot fi instalate cu npm install.
+Pentru rularea aplicatiei: nodemon app.js
+
+Pentru requesturile de tip GET, la fiecare endpoint se creeaza un query cu toate
+entitatile de acel tip, se pun datele acestora intr-un array si este trimis ca
+raspuns.
+

@@ -103,6 +103,11 @@ router.patch('/:id', reqAuth, async (req, res) => {
             return res.status(400).send();
         }
 
+        if (JSON.stringify(req.body.teacher_id) !== JSON.stringify(tclass.teacher_id)) {
+            console.log('Only the owner of the tutoring class can update it');
+            return res.status(401).send();
+        }
+
         // update tutoring class
         await Tutoring.findByIdAndUpdate(id, { description });
 
@@ -154,6 +159,12 @@ router.delete('/:id', reqAuth, async (req, res) => {
 
         const teacher_id = tclass.teacher_id;
         const teacher = await User.findOne({_id: new mongoose.Types.ObjectId(teacher_id)});
+
+        if (JSON.stringify(req.body.teacher_id) !== JSON.stringify(tclass.teacher_id)) {
+            console.log('Only the owner of the tutoring class can delete it');
+            return res.status(401).send();
+        }
+
         let classesArray = teacher.tutoring_classes;
         let index = -1;
 

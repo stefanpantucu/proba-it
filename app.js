@@ -36,7 +36,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5100;
 
 app.enable('trust proxy');
 

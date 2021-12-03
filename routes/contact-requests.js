@@ -4,9 +4,15 @@ const mongoose = require('mongoose');
 const contactModel = require('../models/contact-requests');
 
 router.get('/', async (req, res) => {
-    var contactArray = await contactModel.find();
+    let contactArray = await contactModel.find();
+    let respArray = [];
 
-    res.send(contactArray);
+    contactArray.forEach(contact => {
+        respArray.push({ id: contact._id, message: contact.message, name: contact.name,
+                         email: contact.email, is_resolved:contact.is_resolved });
+    })
+
+    res.send(respArray);
 })
 
 router.get('/:id', async (req, res) => {
